@@ -9,7 +9,9 @@ async function add(params) {
   const data = {
     ...params,
     country: params.country.toLowerCase(),
-    referrer: params.referrer.toLowerCase()
+    referrer: params.referrer.toLowerCase(),
+    state: params.state.toLowerCase(),
+    city: params.city.toLowerCase()
   };
 
   const nowUTC = new Date().toISOString();
@@ -35,6 +37,8 @@ async function add(params) {
     if (visit) {
       const countries = typeof visit.countries === "string" ? JSON.parse(visit.countries) : visit.countries;
       const referrers = typeof visit.referrers === "string" ? JSON.parse(visit.referrers) : visit.referrers;
+      const states = typeof visit.states === "string" ? JSON.parse(visit.states) : visit.states;
+      const cities = typeof visit.cities === "string" ? JSON.parse(visit.cities) : visit.cities;
       await trx("visits")
         .where({ id: visit.id })
         .increment(`br_${data.browser}`, 1)
@@ -49,6 +53,14 @@ async function add(params) {
           referrers: JSON.stringify({
             ...referrers,
              [data.referrer]: (referrers[data.referrer] ?? 0) + 1
+          }),
+          states: JSON.stringify({
+            ...states,
+            [data.state]: (states[data.state] ?? 0) + 1
+          }),
+          cities: JSON.stringify({
+            ...cities,
+            [data.city]: (cities[data.city] ?? 0) + 1
           })
         });
     } else {
@@ -57,6 +69,8 @@ async function add(params) {
         [`br_${data.browser}`]: 1,
         countries: { [data.country]: 1 },
         referrers: { [data.referrer]: 1 },
+        states: { [data.state]: 1 },
+        cities: { [data.city]: 1 },
         [`os_${data.os}`]: 1,
         total: 1,
         link_id: data.link_id,
@@ -97,7 +111,6 @@ async function find(match, total) {
       total: 0
     }
   };
-
   const visitsStream = knex("visits").where(match).stream();
   const now = new Date();
 
@@ -114,6 +127,8 @@ async function find(match, total) {
       const period = stats[type].stats;
       const countries = typeof visit.countries === "string" ? JSON.parse(visit.countries) : visit.countries;
       const referrers = typeof visit.referrers === "string" ? JSON.parse(visit.referrers) : visit.referrers;
+      const states = typeof visit.states === "string" ? JSON.parse(visit.states) : visit.states;
+      const cities = typeof visit.cities === "string" ? JSON.parse(visit.cities) : visit.cities;
       stats[type].stats = {
         browser: {
           chrome: period.browser.chrome + visit.br_chrome,
@@ -151,7 +166,28 @@ async function find(match, total) {
             }),
             {}
           )
-        }
+        },
+        state: {
+          ...period.state,
+          ...Object.entries(states).reduce(
+            (obj, [state, count]) => ({
+              ...obj,
+              [state]: (period.state[state] || 0) + count
+            }),
+            {}
+          )
+          },
+        city: {
+          ...period.city,
+          ...Object.entries(cities).reduce(
+            (obj, [city, count]) => ({
+              ...obj,
+              [city]: (period.city[city] || 0) + count
+            }),
+            {}
+          )
+          }
+
       };
       stats[type].views[index] += visit.total;
       stats[type].total += visit.total;
@@ -179,9 +215,12 @@ async function find(match, total) {
       views: stats.lastWeek.views,
       total: stats.lastWeek.total
     },
-    updatedAt: new Date()
   };
-
+  console.log(JSON.stringify({
+    country:response.lastYear.stats.country,
+    state:response.lastYear.stats.state,
+    city:response.lastYear.stats.city
+  },null,2))
   if (match.link_id && env.REDIS_ENABLED) {
     const key = redis.key.stats(match.link_id);
     redis.client.set(key, JSON.stringify(response), "EX", 60);

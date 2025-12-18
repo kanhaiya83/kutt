@@ -104,7 +104,9 @@ function statsObjectToArray(obj) {
     browser: objToArr("browser"),
     os: objToArr("os"),
     country: objToArr("country"),
-    referrer: objToArr("referrer")
+    referrer: objToArr("referrer"),
+    state: objToArr("state"),
+    city: objToArr("city")
   };
 }
 
@@ -223,7 +225,9 @@ function getInitStats() {
       windows: 0
     },
     country: {},
-    referrer: {}
+    referrer: {},
+    state: {},
+    city: {}
   });
 }
 

@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/thedevs-network/kutt#readme",
   "dependencies": {
+    "@maxmind/geoip2-node": "^6.3.4",
     "bcryptjs": "2.4.3",
     "better-sqlite3": "11.8.1",
     "bull": "4.16.5",

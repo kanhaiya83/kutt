@@ -382,6 +382,150 @@ function createOsChart() {
   });
 }
 
+// create cities chart
+function createCitiesChart() {
+  const canvases = document.querySelectorAll("canvas.cities");
+  if (!canvases || !canvases.length) return;
+
+  canvases.forEach(ctx => {
+    const data = JSON.parse(ctx.dataset.data);
+    const period = ctx.dataset.period;
+
+    const gradient = ctx.getContext("2d").createLinearGradient(500, 0, 0, 0);
+    const gradientHover = ctx.getContext("2d").createLinearGradient(500, 0, 0, 0);
+    gradient.addColorStop(0, "rgba(179, 157, 219, 0.95)");   
+    gradient.addColorStop(1, "rgba(179, 157, 219, 0.05)");
+    gradientHover.addColorStop(0, "rgba(179, 157, 219, 0.9)");   
+    gradientHover.addColorStop(1, "rgba(179, 157, 219, 0.4)");
+
+    new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: data.map(d => d.name),
+        datasets: [{
+          label: "Views",
+          data: data.map(d => d.value),
+          backgroundColor: gradient,
+          borderColor: "rgba(179, 157, 219, 1)",
+          borderWidth: 1,
+          hoverBackgroundColor: gradientHover,
+          hoverBorderWidth: 2
+        }]
+      },
+      options: {
+        indexAxis: "y",
+        plugins: {
+          legend: {
+            display: false,
+          },
+          tooltip: {
+            backgroundColor: "rgba(255, 255, 255, 0.95)",
+            titleColor: "#333",
+            titleFont: { weight: "normal", size: 15 },
+            bodyFont: { weight: "normal", size: 16 },
+            bodyColor: "rgb(179, 157, 219)",
+            padding: 12,
+            cornerRadius: 2,
+            borderColor: "rgba(0, 0, 0, 0.1)",
+            borderWidth: 1,
+            displayColors: false,
+          }
+        },
+        responsive: true,
+        interaction: {
+          intersect: false,
+          mode: "index",
+          axis: "y"
+        },
+        scales: {
+          x: {
+            grace:"5%",
+            beginAtZero: true,
+            ticks: {
+              maxTicksLimit: 6,
+            }
+          }
+        }  
+      }
+    });
+
+    // reset the display: block style that chart.js applies automatically
+    ctx.style.display = "";
+  });
+}
+
+// create states chart
+function createStatesChart() {
+  const canvases = document.querySelectorAll("canvas.states");
+  if (!canvases || !canvases.length) return;
+
+  canvases.forEach(ctx => {
+    const data = JSON.parse(ctx.dataset.data);
+    const period = ctx.dataset.period;
+
+    const gradient = ctx.getContext("2d").createLinearGradient(500, 0, 0, 0);
+    const gradientHover = ctx.getContext("2d").createLinearGradient(500, 0, 0, 0);
+    gradient.addColorStop(0, "rgba(179, 157, 219, 0.95)");   
+    gradient.addColorStop(1, "rgba(179, 157, 219, 0.05)");
+    gradientHover.addColorStop(0, "rgba(179, 157, 219, 0.9)");   
+    gradientHover.addColorStop(1, "rgba(179, 157, 219, 0.4)");
+
+    new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: data.map(d => d.name),
+        datasets: [{
+          label: "Views",
+          data: data.map(d => d.value),
+          backgroundColor: gradient,
+          borderColor: "rgba(179, 157, 219, 1)",
+          borderWidth: 1,
+          hoverBackgroundColor: gradientHover,
+          hoverBorderWidth: 2
+        }]
+      },
+      options: {
+        indexAxis: "y",
+        plugins: {
+          legend: {
+            display: false,
+          },
+          tooltip: {
+            backgroundColor: "rgba(255, 255, 255, 0.95)",
+            titleColor: "#333",
+            titleFont: { weight: "normal", size: 15 },
+            bodyFont: { weight: "normal", size: 16 },
+            bodyColor: "rgb(179, 157, 219)",
+            padding: 12,
+            cornerRadius: 2,
+            borderColor: "rgba(0, 0, 0, 0.1)",
+            borderWidth: 1,
+            displayColors: false,
+          }
+        },
+        responsive: true,
+        interaction: {
+          intersect: false,
+          mode: "index",
+          axis: "y"
+        },
+        scales: {
+          x: {
+            grace:"5%",
+            beginAtZero: true,
+            ticks: {
+              maxTicksLimit: 6,
+            }
+          }
+        }  
+      }
+    });
+
+    // reset the display: block style that chart.js applies automatically
+    ctx.style.display = "";
+  });
+}
+
 // add data to the map
 function feedMapData(period) {
   const map = document.querySelector("svg.map");
@@ -446,5 +590,7 @@ function createCharts() {
   createBrowsersChart();
   createReferrersChart();
   createOsChart();
+  createCitiesChart();
+  createStatesChart();
   feedMapData();
 }

@@ -27,7 +27,7 @@ if (process.argv.includes("--production")) {
 }
 
 const spec = {
-  PORT: num({ default: 3000 }),
+  PORT: num({ default: 5000 }),
   SITE_NAME: str({ example: "Kutt", default: "Kutt" }),
   DEFAULT_DOMAIN: str({ example: "kutt.it", default: "localhost:3000" }),
   LINK_LENGTH: num({ default: 6 }),
